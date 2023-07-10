@@ -5,8 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Screenshot"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="400" Width="400">
+    <Window.Resources>
+        <Style x:Key="MyButtonStyle" TargetType="FrameworkElement">
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Margin" Value="0,10" />
+        </Style>
+    </Window.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <ComboBox x:Name="MonitorComboBox" Loaded="MonitorComboBox_Loaded" DisplayMemberPath="DeviceName" Grid.Row="0"
+                  Grid.Column="0" Style="{StaticResource MyButtonStyle}" />
+        <Button Name="ButtonTakeScreenShot" Click="ButtonTakeScreenShot_OnClick"
+                Content="ScreenShot" Grid.Row="0" Grid.Column="1" Style="{StaticResource MyButtonStyle}">
+        </Button>
+        <Image Name="ScreenShotImage" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"
+               Grid.Column="0" Grid.ColumnSpan="2" />
     </Grid>
 </Window>
