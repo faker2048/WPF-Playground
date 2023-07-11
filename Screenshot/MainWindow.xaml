@@ -10,26 +10,26 @@
         <Style x:Key="MyButtonStyle" TargetType="FrameworkElement">
             <Setter Property="Width" Value="100" />
             <Setter Property="Height" Value="30" />
-            <Setter Property="Margin" Value="0,10" />
+            <Setter Property="Margin" Value="5" />
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-
-        <ComboBox x:Name="MonitorComboBox" Loaded="MonitorComboBox_Loaded" DisplayMemberPath="DeviceName" Grid.Row="0"
-                  Grid.Column="0" Style="{StaticResource MyButtonStyle}" />
-        <Button Name="ButtonTakeScreenShot" Click="ButtonTakeScreenShot_OnClick"
-                Content="ScreenShot" Grid.Row="0" Grid.Column="1" Style="{StaticResource MyButtonStyle}">
-        </Button>
-        <Image Name="ScreenShotImage" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"
-               Grid.Column="0" Grid.ColumnSpan="2" />
-    </Grid>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="10" Orientation="Vertical">
+                <ComboBox x:Name="MonitorComboBox" Loaded="MonitorComboBox_Loaded" DisplayMemberPath="DeviceName"
+                          Style="{StaticResource MyButtonStyle}" />
+                <Button Name="ButtonTakeScreenShot" Click="ButtonTakeScreenShot_OnClick"
+                        Content="ScreenShot" Style="{StaticResource MyButtonStyle}">
+                </Button>
+            </StackPanel>
+            <Border Grid.Column="1" Margin="10" BorderBrush="Gray" BorderThickness="1" Padding="5">
+                <Label Name="SystemStateLabel" Margin="5" Content="Hello World"></Label>
+            </Border>
+        </Grid>
+        <Image Margin="10" Name="ScreenShotImage" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </DockPanel>
 </Window>

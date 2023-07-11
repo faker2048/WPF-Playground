@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Point = System.Drawing.Point;
 using Screen = System.Windows.Forms.Screen;
 using Size = System.Drawing.Size;
@@ -14,9 +16,42 @@ namespace Screenshot
         public MainWindow()
         {
             InitializeComponent();
+            InitTimer();
+        }
+
+        private DispatcherTimer timer;
+
+        private void InitTimer()
+        {
+            timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(0.1)
+            };
+            timer.Tick += TimerTick;
+            timer.Start();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            using PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            float cpuUsage = cpuCounter.NextValue();
+
+            // 在文本框中显示CPU占用率
+            SystemStateLabel.Content = cpuUsage.ToString("0.00") + "%";
+            UpdateScreenShotImageNonBlocking();
         }
 
         private void ButtonTakeScreenShot_OnClick(object sender, RoutedEventArgs e)
+        {
+            UpdateScreenShotImageNonBlocking();
+        }
+
+        private void UpdateScreenShotImageNonBlocking()
+        {
+            
+        }
+
+        private void UpdateScreenShotImage()
         {
             var selectedScreen = (Screen)MonitorComboBox.SelectedItem;
             if (selectedScreen == null) return;
