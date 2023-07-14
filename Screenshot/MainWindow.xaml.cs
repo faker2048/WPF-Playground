@@ -13,32 +13,41 @@ namespace Screenshot
 {
     public partial class MainWindow : Window
     {
+        private DispatcherTimer _timer;
+        private PerformanceCounter _cpuCounter;
+
         public MainWindow()
         {
             InitializeComponent();
             InitTimer();
+            InitPerformanceCounter();
         }
-
-        private DispatcherTimer timer;
 
         private void InitTimer()
         {
-            timer = new DispatcherTimer
+            _timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(0.1)
+                Interval = TimeSpan.FromSeconds(0.5)
             };
-            timer.Tick += TimerTick;
-            timer.Start();
+            _timer.Tick += TimerTick;
+            _timer.Start();
+        }
+
+        private void InitPerformanceCounter()
+        {
+            _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-            using PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            float cpuUsage = cpuCounter.NextValue();
-
-            // 在文本框中显示CPU占用率
-            SystemStateLabel.Content = cpuUsage.ToString("0.00") + "%";
+            DisplayCpuUsage();
             UpdateScreenShotImageNonBlocking();
+        }
+
+        private void DisplayCpuUsage()
+        {
+            float cpuUsage = _cpuCounter.NextValue();
+            SystemStateLabel.Content = $"{cpuUsage:F2}%";
         }
 
         private void ButtonTakeScreenShot_OnClick(object sender, RoutedEventArgs e)
@@ -48,7 +57,8 @@ namespace Screenshot
 
         private void UpdateScreenShotImageNonBlocking()
         {
-            
+            // No implementation provided in original code, so keeping it as is
+
         }
 
         private void UpdateScreenShotImage()
@@ -56,6 +66,12 @@ namespace Screenshot
             var selectedScreen = (Screen)MonitorComboBox.SelectedItem;
             if (selectedScreen == null) return;
 
+            var screenshot = TakeScreenshot(selectedScreen);
+            ScreenShotImage.Source = ConvertBitmapToBitmapImage(screenshot);
+        }
+
+        private Bitmap TakeScreenshot(Screen selectedScreen)
+        {
             using var bitmap = new Bitmap(selectedScreen.Bounds.Width, selectedScreen.Bounds.Height);
             using (var g = Graphics.FromImage(bitmap))
             {
@@ -63,9 +79,7 @@ namespace Screenshot
                     CopyPixelOperation.SourceCopy);
             }
 
-            // Convert the bitmap to BitmapImage for displaying in WPF Image control
-            BitmapImage bitmapImage = ConvertBitmapToBitmapImage(bitmap);
-            ScreenShotImage.Source = bitmapImage;
+            return bitmap;
         }
 
         private BitmapImage ConvertBitmapToBitmapImage(Bitmap bitmap)
@@ -86,7 +100,7 @@ namespace Screenshot
             return bitmapImage;
         }
 
-        private void MonitorComboBox_Loaded(object sender, RoutedEventArgs e)
+        private void MonitorComboBox_Loaded(object sender, RoutedEventArgs routedEventArgs)
         {
             // Get all screens and add them to the ComboBox
             var screens = Screen.AllScreens;
